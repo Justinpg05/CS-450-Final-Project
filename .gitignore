@@ -1,0 +1,25 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Temporary files
+captured_face.jpg
+
+# Logs
+*.log
+
+# Optional: ignore local test images (uncomment if needed)
+# known_faces/*.jpg
+# known_faces/*.png
