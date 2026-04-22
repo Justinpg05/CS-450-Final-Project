@@ -51,10 +51,16 @@ If that prints without errors, you're ready.
 
 
 
-IF YOU WANNA TEST OUT THE PROGRAM GO TO capture_and_comapre.py
+IF YOU WANNA TEST OUT THE PROGRAM GO TO capture_and_compare.py
 when you run the file it will open up a window showing your webcam
 if you press space it will capture an image of your face, check the terminal
 it will ask you to assign a name to an identity if its the first time
+
+AGENTIC ENTRY (embedding memory)
+
+Run: python main.py
+
+Flow: main.py → agent.py (decision + reasoning logs) → tools.py (thin wrappers) → face_engine.py (capture, embeddings, cosine vs known_faces + database/*.pt) → agent_tools/ (FaceNet + paths).
 
 
 
@@ -65,6 +71,11 @@ PROJECT STRUCTURE
 
 face-candy-agent/
 ├── agent_tools/
+├── database/          # visitor embedding memory (.pt files; gitignored)
+├── face_engine.py     # capture + embed + compare + store (uses agent_tools)
+├── tools.py           # tool API used by the agent
+├── agent.py           # run_agent() loop and logs
+├── main.py            # entry: run_agent()
 ├── known_faces/
 ├── served.json
 ├── requirements.txt
