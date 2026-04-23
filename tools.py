@@ -25,4 +25,4 @@ def compare_embeddings(embedding):
 
 
 def dispense_candy():
-    print("Candy dispensed!")
+    print("[Agent] Candy dispensed!")

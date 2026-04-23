@@ -17,10 +17,11 @@ AGENT_SIMILARITY_THRESHOLD = 0.8
 def log(reason: str, **kwargs) -> None:
     ts = datetime.datetime.now().isoformat(timespec="seconds")
     extra = (" " + " ".join(f"{k}={v!r}" for k, v in kwargs.items())) if kwargs else ""
-    print(f"[{ts}] {reason}{extra}")
+    print(f"[{ts}] [Agent] {reason}{extra}")
 
 
 def run_agent() -> None:
+    print("[Agent] Starting iteration...")
     image = capture_image()
     if image is None:
         log("Abort: no image captured (quit or camera error).")
@@ -31,7 +32,7 @@ def run_agent() -> None:
     face = detect_face(image)
     if face is None:
         log("No face detected in capture.")
-        print("No face detected")
+        print("[Agent] No face detected")
         return
 
     log("Face OK; computing embedding.", handle=face)
@@ -50,7 +51,7 @@ def run_agent() -> None:
 
     if similarity > AGENT_SIMILARITY_THRESHOLD:
         log("Decision: already seen - deny candy.")
-        print("Already seen - no candy")
+        print("[Agent] Decision: Already seen - no candy")
         return
 
     log("Decision: new visitor - dispense and remember embedding.")

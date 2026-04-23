@@ -31,7 +31,7 @@ flowchart LR
   capCmp --> agentTools
 ```
 
-- **`main.py`** — CLI entry; calls `run_agent()`.
+- **`main.py`** — CLI entry; runs `run_agent()` in a **loop** until you press **Ctrl+C** (each iteration opens capture again; quitting capture with `q` skips that round and the loop continues).
 - **`agent.py`** — Orchestrates tools, applies the similarity threshold, writes timestamped **reasoning logs**, dispenses or denies candy, and stores new visitor embeddings when appropriate.
 - **`tools.py`** — Stable tool surface used by the agent (capture, detect, embed, compare, dispense, store).
 - **`face_engine.py`** — Implements capture, embedding extraction, cosine similarity against `known_faces` plus `database/*.pt` visitor memory.
@@ -42,6 +42,8 @@ flowchart LR
 This repo implements **agentic behavior** as a **custom tool-using agent**: explicit **tools**, a **closed-loop policy** (`run_agent`), **memory** (embeddings on disk), and **auditable decisions** (structured logs). That matches the “agents call tools and manage state” idea used in many courses and in robotics pipelines.
 
 We did **not** wire in **OpenClaw**, LangChain, CrewAI, or another LLM-centric orchestration framework: the policy here is **deterministic** (embedding similarity vs a threshold), not LLM-planned. If your rubric requires a named third-party framework, the next step would be to expose `run_agent()` or individual tools to that framework as **skills/tools** while keeping this FaceNet path as the source of truth.
+
+**Rubric check:** If your assignment text requires OpenClaw or another *named* library, confirm with your **TA or instructor** whether this **custom** tool-using agent counts as “any agent framework” before the deadline.
 
 ## Requirements
 
@@ -86,7 +88,7 @@ Opens the webcam; press **SPACE** to capture. The program matches or enrolls a *
 python main.py
 ```
 
-Same capture UX (via `agent_tools.capture_image`). The agent compares the live embedding to **known faces** plus **saved visitor embeddings** in `database/`. Above-threshold similarity → *already seen* (no candy); otherwise → dispense (log) and persist a new visitor vector. Generated `database/*.pt` files are **gitignored**.
+Same capture UX (via `agent_tools.capture_image`). Runs **repeatedly** until **Ctrl+C**. If you press **`q`** in the capture window, that round aborts and the next iteration starts again. The agent compares the live embedding to **known faces** plus **saved visitor embeddings** in `database/`. Above-threshold similarity → *already seen* (no candy); otherwise → dispense (log) and persist a new visitor vector. Generated `database/*.pt` files are **gitignored**.
 
 ## Testing
 
