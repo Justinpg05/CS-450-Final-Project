@@ -16,6 +16,7 @@ __pycache__/
 
 # Temporary files
 captured_face.jpg
+test.jpg
 
 # Logs
 *.log
@@ -23,3 +24,6 @@ captured_face.jpg
 # Optional: ignore local test images (uncomment if needed)
 # known_faces/*.jpg
 # known_faces/*.png
+
+# Agent anonymous embedding memory (runtime)
+database/*.pt
