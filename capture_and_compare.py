@@ -6,6 +6,7 @@ import cv2
 import os
 from pathlib import Path
 import json
+import time
 
 device = torch.device("cpu")
 
@@ -70,6 +71,27 @@ def load_known_embeddings():
 
 
 # ---------- CAMERA ----------
+_WARMUP_FRAMES = 30
+_FACE_WAIT_SEC = 15.0
+_MIN_FACE_PX = 60
+_HAAR = cv2.CascadeClassifier(
+    cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+)
+
+
+def _frame_has_face(bgr) -> bool:
+    if _HAAR.empty():
+        return True
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+    faces = _HAAR.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=4,
+        minSize=(_MIN_FACE_PX, _MIN_FACE_PX),
+    )
+    return len(faces) > 0
+
+
 def capture_image():
     cap = cv2.VideoCapture(0)
 
@@ -77,39 +99,64 @@ def capture_image():
         print("Could not open webcam")
         return False
 
-    print("Press SPACE to capture | q to quit")
+    print("Webcam ready — capturing automatically when a face is in frame (q to cancel)")
+
+    for _ in range(_WARMUP_FRAMES):
+        ret, _ = cap.read()
+        if not ret:
+            cap.release()
+            cv2.destroyAllWindows()
+            return False
+
+    deadline = time.monotonic() + _FACE_WAIT_SEC
+    last_frame = None
+    overlay = (
+        "Hold still — capturing automatically…"
+        if not _HAAR.empty()
+        else "Capturing automatically…"
+    )
 
     while True:
         ret, frame = cap.read()
         if not ret:
             break
 
+        last_frame = frame
         cv2.putText(
             frame,
-            "Press SPACE to capture",
+            overlay,
             (20, 40),
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.8,
+            0.65,
             (0, 255, 0),
-            2
+            2,
         )
 
         cv2.imshow("Capture", frame)
         key = cv2.waitKey(1) & 0xFF
-
-        if key == ord(" "):
-            cv2.imwrite(CAPTURE_PATH, frame)
-            print("Captured image")
-            break
 
         if key == ord("q"):
             cap.release()
             cv2.destroyAllWindows()
             return False
 
+        if _frame_has_face(frame):
+            cv2.imwrite(CAPTURE_PATH, frame)
+            print("Captured image")
+            cap.release()
+            cv2.destroyAllWindows()
+            return True
+
+        if time.monotonic() >= deadline:
+            break
+
+    if last_frame is not None:
+        cv2.imwrite(CAPTURE_PATH, last_frame)
+        print("Captured image (timeout — best effort frame)")
+
     cap.release()
     cv2.destroyAllWindows()
-    return True
+    return last_frame is not None
 
 
 # ---------- MATCHING ----------

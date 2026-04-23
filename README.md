@@ -80,7 +80,7 @@ python -c "import torch, PIL, facenet_pytorch; print('Setup works')"
 python capture_and_compare.py
 ```
 
-Opens the webcam; press **SPACE** to capture. The program matches or enrolls a **named** identity under `known_faces/` and uses `served.json` for repeat-visit candy rules. Follow on-screen prompts.
+Opens the webcam; after a short warmup it **captures automatically** when a frontal face is visible (no keypress). Press **`q`** to cancel that capture. The program matches or enrolls a **named** identity under `known_faces/` and uses `served.json` for repeat-visit candy rules. Follow on-screen prompts.
 
 ### Agentic embedding-memory flow
 
@@ -88,7 +88,7 @@ Opens the webcam; press **SPACE** to capture. The program matches or enrolls a *
 python main.py
 ```
 
-Same capture UX (via `agent_tools.capture_image`). Runs **repeatedly** until **Ctrl+C**. If you press **`q`** in the capture window, that round aborts and the next iteration starts again. The agent compares the live embedding to **known faces** plus **saved visitor embeddings** in `database/`. Above-threshold similarity → *already seen* (no candy); otherwise → dispense (log) and persist a new visitor vector. Generated `database/*.pt` files are **gitignored**.
+Same automatic capture behavior (via `agent_tools.capture_image`: warmup, then snapshot when OpenCV sees a face, with a timeout fallback). Runs **repeatedly** until **Ctrl+C**. If you press **`q`** in the capture window, that round aborts and the next iteration starts again. The agent compares the live embedding to **known faces** plus **saved visitor embeddings** in `database/`. Above-threshold similarity → *already seen* (no candy); otherwise → dispense (log) and persist a new visitor vector. Generated `database/*.pt` files are **gitignored**.
 
 ## Testing
 
