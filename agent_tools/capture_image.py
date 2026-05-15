@@ -1,3 +1,4 @@
+import sys
 import time
 
 import cv2
@@ -65,8 +66,10 @@ def capture_image():
         )
         cv2.imshow("Capture", frame)
         key = cv2.waitKey(1) & 0xFF
+        if key == ord("q") or key == 27:  # q or Escape
             cap.release()
             cv2.destroyAllWindows()
+            sys.exit(0)
 
         if _frame_has_face(frame):
             cv2.imwrite(str(CAPTURE_PATH), frame)

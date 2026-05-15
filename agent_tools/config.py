@@ -9,6 +9,7 @@ KNOWN_FACES_DIR.mkdir(exist_ok=True)
 
 CAPTURE_PATH = BASE_DIR / "captured_face.jpg"
 SERVED_FILE = BASE_DIR / "served.json"
+THRESHOLD = 0.83
 
 device = torch.device("cpu")
 
