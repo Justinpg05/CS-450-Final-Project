@@ -65,10 +65,8 @@ def capture_image():
         )
         cv2.imshow("Capture", frame)
         key = cv2.waitKey(1) & 0xFF
-        if key == ord("q"):
             cap.release()
             cv2.destroyAllWindows()
-            return None
 
         if _frame_has_face(frame):
             cv2.imwrite(str(CAPTURE_PATH), frame)

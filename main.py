@@ -2,7 +2,6 @@
 from agent import run_agent
 
 if __name__ == "__main__":
-    print("Candy agent running in a loop. Press Ctrl+C to stop.")
     try:
         while True:
             run_agent()
